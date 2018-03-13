@@ -165,6 +165,20 @@ static int fzip_readdir(const char* path, void* buf, fuse_fill_dir_t filler,
 }
 
 
+static int fzip_unlink(const char* path)
+{
+    (void)path;
+    return -EROFS;
+}
+
+
+static int fzip_rmdir(const char *path)
+{
+    (void)path;
+    return -EROFS;
+}
+
+
 static int fzip_open(const char *path, struct fuse_file_info *fi)
 {
 
@@ -208,51 +222,28 @@ static int fzip_read(const char *path, char *buf, size_t size,
 static int fzip_mkdir(const char *path, mode_t mode)
 {
 
+    (void)path;
     (void) mode;
-
-    zip_dir_add(ziparchive, path + 1, 0);
-
-    zip_close(ziparchive); // we have to close and reopen to write the changes
-    ziparchive = zip_open(zipname, 0, NULL);
-
-    return 0;
+    return -EROFS;
 }
 
 
 static int fzip_rename(const char *from, const char *to)
 {
 
-    zip_int64_t index = zip_name_locate(ziparchive, from + 1, 0);
-    if (zip_file_rename(ziparchive, index, to + 1, 0)  == -1)
-        return -ENOENT;
-
-    zip_close(ziparchive); // we have to close and reopen to write the changes
-    ziparchive = zip_open(zipname, 0, NULL);
-    return 0;
+    (void) from;
+    (void) to;
+    return -EROFS;
 }
 
 
 
 static int fzip_mknod(const char* path, mode_t mode, dev_t rdev)
 {
-    printf("mknod: %s mode: %u\n", path, mode);
-
+    (void) path;
+    (void) mode;
     (void) rdev;
-
-    if ((mode & S_IFREG) == S_IFREG)
-    {
-        zip_source_t *s;
-
-        if ((s = zip_source_buffer(ziparchive, NULL, 0, 0)) == NULL ||
-                zip_file_add(ziparchive, path + 1, s, ZIP_FL_OVERWRITE) < 0)
-        {
-            zip_source_free(s);
-            printf("Error adding file %s\n", path);
-            return 0;
-        }
-    }
-
-    return 0;
+    return -EROFS;
 }
 
 
@@ -288,6 +279,8 @@ static struct fuse_operations fzip_oper =
     .read           = fzip_read,
     .mkdir          = fzip_mkdir,
     .mknod          = fzip_mknod,
+    .unlink         = fzip_unlink,
+    .rmdir          = fzip_rmdir,
     .statfs         = fzip_statfs, // This is the inbuilt fuse version of fstat.
     .rename         = fzip_rename,
     .destroy        = fzip_destroy, // This is the inbuilt fuse version of close.
