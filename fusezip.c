@@ -110,6 +110,18 @@ static int fzip_getattr(const char *path, struct stat *stbuf)
     return 0;
 }
 
+static int fzip_statfs(const char* path, struct statvfs* stbuf){
+
+        int res;
+
+        res = statvfs(path, stbuf);
+        if (res == -1)
+        return -errno;
+
+        return 0;
+
+}
+
 
 static int fzip_readdir(const char* path, void* buf, fuse_fill_dir_t filler,
                         off_t offset, struct fuse_file_info* fi)
@@ -276,8 +288,9 @@ static struct fuse_operations fzip_oper =
     .read           = fzip_read,
     .mkdir          = fzip_mkdir,
     .mknod          = fzip_mknod,
+    .statfs         = fzip_statfs, // This is the inbuilt fuse version of fstat.
     .rename         = fzip_rename,
-    .destroy        = fzip_destroy,
+    .destroy        = fzip_destroy, // This is the inbuilt fuse version of close.
 };
 
 int main(int argc, char *argv[])
