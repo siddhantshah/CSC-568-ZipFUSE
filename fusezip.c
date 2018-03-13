@@ -171,6 +171,17 @@ static int fzip_unlink(const char* path)
     return -EROFS;
 }
 
+static int fzip_write(const char* path, const char *buf, size_t size, off_t offset, struct fuse_file_info* fi)
+{
+    (void)path;
+     (void)buf;
+    (void)size;
+     (void)offset;
+     (void)fi;
+
+
+    return -EROFS;
+}
 
 static int fzip_rmdir(const char *path)
 {
@@ -273,7 +284,7 @@ static void fzip_destroy(void* private_data)
 static struct fuse_operations fzip_oper =
 {
     .access         = fzip_access,
-    .getattr        = fzip_getattr,
+    .getattr        = fzip_getattr, // This is the inbuilt fuse version of lstat.
     .readdir        = fzip_readdir,
     .open           = fzip_open,
     .read           = fzip_read,
@@ -281,6 +292,7 @@ static struct fuse_operations fzip_oper =
     .mknod          = fzip_mknod,
     .unlink         = fzip_unlink,
     .rmdir          = fzip_rmdir,
+    .write          = fzip_write,
     .statfs         = fzip_statfs, // This is the inbuilt fuse version of fstat.
     .rename         = fzip_rename,
     .destroy        = fzip_destroy, // This is the inbuilt fuse version of close.
