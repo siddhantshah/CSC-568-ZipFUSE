@@ -1,26 +1,20 @@
-Fuse Zip
+Zip FUSE
 ========
 
-A zip file system implementation using libfuse and libzip.
+This is an implementation of a zip-based file system which is based on libfuse and libzip.
 
 How to run
 ==========
 
 ```
 $ make
-$ ./fusezip <zipfile> [options] <mountpoint>
+$ ./fusezip <zipfile> <mountpoint>
 ```
 
-Tips for Debugging
+Dependencies
 ==================
-```
-$ ./fusezip <zipfile> -s -f <mountpoint>
-```
-
-```
-  -s runs in single threaded mode  
-  -f displays debugging output to stdout  
-```
+1. libfuse
+2. libzip
 
 References
 ==========
@@ -28,4 +22,3 @@ References
 https://github.com/libfuse/libfuse/blob/master/example/hello.c  
 http://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/html/  
 https://www.cs.hmc.edu/~geoff/classes/hmc.cs135.201109/homework/fuse/fuse_doc.html  
-https://github.com/NatTuck/fogfs/  
