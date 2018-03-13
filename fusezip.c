@@ -165,29 +165,6 @@ static int fzip_open(const char *path, struct fuse_file_info *fi)
 }
 
 
-static int fzip_fstat(const char *filename)
-{
-     struct stat stat_p;        
-
-      if ( -1 ==  stat (filename, &stat_p))
-      {
-        printf(" Error occoured attempting to stat %s\n", filename);
-        exit(0);
-      }
-                    /* Print a few structure members.   */
-       
-      printf("Stats for %s \n", filename);
-
-      printf("Modify time is %s", format_time(stat_p.st_mtime));
-
-                    /* Access time does not get updated
-                       if the filesystem is NFS mounted!    */
-
-      printf("Access time is %s", format_time(stat_p.st_atime));
-       
-      printf("File size is   %d bytes\n", stat_p.st_size);
-
-}
 
 static int fzip_read(const char *path, char *buf, size_t size,
                      off_t offset, struct fuse_file_info* fi)
@@ -282,7 +259,7 @@ static int fzip_access(const char* path, int mask)
 
 
 
-static void fzip_close(void* private_data)
+static void fzip_destroy(void* private_data)
 {
     (void) private_data;
 
@@ -300,8 +277,7 @@ static struct fuse_operations fzip_oper =
     .mkdir          = fzip_mkdir,
     .mknod          = fzip_mknod,
     .rename         = fzip_rename,
-    .fstat          = fzip_fstat,
-    .close          = fzip_close,
+    .destroy        = fzip_destroy,
 };
 
 int main(int argc, char *argv[])
