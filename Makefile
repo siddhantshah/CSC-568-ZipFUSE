@@ -1,17 +1,11 @@
 CC= gcc
 RM= rm -vf
 CFLAGS= -Wall `pkg-config fuse --cflags --libs` -lzip -g
-fusezip: fusezip.o
-	gcc -Wall fusezip.c `pkg-config fuse --cflags --libs` -lzip -g
-
-
-# SRCFILES= $(wildcard *.c)
-# OBJFILES= $(patsubst %.c, %.o, $(SRCFILES))
-# PROGFILES= $(patsubst %.c, %, $(SRCFILES))
-
+fusemake:
+        gcc -Wall fusezip.c `pkg-config fuse --cflags --libs` -lzip -g -o fusezip
 
 .PHONY: all clean
 
 all: $(PROGFILES)
 clean:
-	$(RM) $(OBJFILES) $(PROGFILES) *~
+        $(RM) $(OBJFILES) $(PROGFILES) *~
