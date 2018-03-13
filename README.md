@@ -3,7 +3,7 @@ Zip FUSE
 
 This is an implementation of a zip-based file system which is based on libfuse and libzip.
 
-How to run
+Instructions to Run
 ==========
 
 ```
