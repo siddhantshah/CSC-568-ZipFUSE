@@ -167,17 +167,19 @@ static int fzip_readdir(const char* path, void* buf, fuse_fill_dir_t filler,
 
 static int fzip_unlink(const char* path)
 {
+    // Fail gracefully since this is a read-only file system.
     (void)path;
     return -EROFS;
 }
 
 static int fzip_write(const char* path, const char *buf, size_t size, off_t offset, struct fuse_file_info* fi)
 {
+    // Fail gracefully since this is a read-only file system.
     (void)path;
-     (void)buf;
+    (void)buf;
     (void)size;
-     (void)offset;
-     (void)fi;
+    (void)offset;
+    (void)fi;
 
 
     return -EROFS;
@@ -185,6 +187,7 @@ static int fzip_write(const char* path, const char *buf, size_t size, off_t offs
 
 static int fzip_rmdir(const char *path)
 {
+    // Fail gracefully since this is a read-only file system.
     (void)path;
     return -EROFS;
 }
@@ -232,7 +235,7 @@ static int fzip_read(const char *path, char *buf, size_t size,
 
 static int fzip_mkdir(const char *path, mode_t mode)
 {
-
+    // Fail gracefully since this is a read-only file system.
     (void)path;
     (void) mode;
     return -EROFS;
@@ -241,7 +244,7 @@ static int fzip_mkdir(const char *path, mode_t mode)
 
 static int fzip_rename(const char *from, const char *to)
 {
-
+    // Fail gracefully since this is a read-only file system.
     (void) from;
     (void) to;
     return -EROFS;
@@ -250,7 +253,8 @@ static int fzip_rename(const char *from, const char *to)
 
 
 static int fzip_mknod(const char* path, mode_t mode, dev_t rdev)
-{
+{    
+    // Fail gracefully since this is a read-only file system.
     (void) path;
     (void) mode;
     (void) rdev;
@@ -261,7 +265,6 @@ static int fzip_mknod(const char* path, mode_t mode, dev_t rdev)
 
 static int fzip_access(const char* path, int mask)
 {
-    printf("access: %s\n", path);
 
     (void) mask;
 
@@ -283,6 +286,7 @@ static void fzip_destroy(void* private_data)
 
 static struct fuse_operations fzip_oper =
 {
+    // Some operations had to be in line with the structure fuse_operations.
     .access         = fzip_access,
     .getattr        = fzip_getattr, // This is the inbuilt fuse version of lstat.
     .readdir        = fzip_readdir,
@@ -293,7 +297,7 @@ static struct fuse_operations fzip_oper =
     .unlink         = fzip_unlink,
     .rmdir          = fzip_rmdir,
     .write          = fzip_write,
-    .statfs         = fzip_statfs, // This is the inbuilt fuse version of fstat.
+    .statfs         = fzip_statfs, // This is the inbuilt fuse version of fstat (but is basically gives stat about the file system).
     .rename         = fzip_rename,
     .destroy        = fzip_destroy, // This is the inbuilt fuse version of close.
 };
